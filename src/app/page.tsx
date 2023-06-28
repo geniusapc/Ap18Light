@@ -1,13 +1,16 @@
 'use client';
+import { Navbar } from '@/components/Navbar';
 import React from 'react';
 import styled from 'styled-components';
 import tw from 'twin.macro';
 
 
+
+
 export default function Home() {
   return (
     <AppContainer>
-      hello world
+      <Navbar />
 
     </AppContainer>
   );
