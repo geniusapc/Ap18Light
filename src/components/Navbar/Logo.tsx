@@ -8,7 +8,7 @@ type Props = {};
 function Logo(props: Props) {
   return (
     <LogoContainer>
-      <Image src="" width={42} alt="logo" />
+      <Image src="/images/logo.svg" height={42} width={42} alt="logo" />
       <LogoText>AP18Light.</LogoText>
     </LogoContainer>
   );
