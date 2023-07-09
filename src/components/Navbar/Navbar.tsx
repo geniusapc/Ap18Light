@@ -29,8 +29,8 @@ const NavbarContainer = styled.div`
     flex
     flex-row
     items-center
-    lg:pl-12
-    lg:pr-12
+    container
+    mx-auto
     justify-between
   `};
 `;

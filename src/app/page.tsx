@@ -5,6 +5,8 @@ import tw from 'twin.macro';
 
 import { Landing } from '@/components/Landing';
 import { Navbar } from '@/components/Navbar';
+import { OurServices } from '@/components/Services';
+import { Marginer } from '@/components/Marginer';
 
 
 export default function Home() {
@@ -12,6 +14,9 @@ export default function Home() {
     <AppContainer>
       <Navbar />
       <Landing />
+      <Marginer margin={"8em"} direction='vertical' />
+      <OurServices />
+
 
     </AppContainer>
   );
@@ -19,12 +24,11 @@ export default function Home() {
 
 const AppContainer = styled.main`
   ${tw`
-    w-full
     h-full
-    min-h-screen
-    flex
-    flex-col
-    items-center
+    container
     overflow-x-hidden
+    relative
+    px-2
+    mx-auto
   `};
 `;

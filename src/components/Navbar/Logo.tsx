@@ -8,8 +8,7 @@ type Props = {};
 function Logo(props: Props) {
   return (
     <LogoContainer>
-      <Image src="/images/logo.svg" height={42} width={42} alt="logo" />
-      <LogoText>AP18Light.</LogoText>
+      <Image src="/images/logo.svg" height={120} width={120} alt="logo" />
     </LogoContainer>
   );
 }
@@ -21,13 +20,4 @@ const LogoContainer = styled.div`
   flex
   items-center
 `}
-`;
-
-const LogoText = styled.div`
-  ${tw`
-    text-sm
-    md:text-3xl
-    font-bold
-    text-black
-  `}
 `;
