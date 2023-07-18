@@ -14,7 +14,7 @@ jobs:
         with:
           host: ${{secrets.HOST}}
           fingerprint: ${{secrets.SSH_PRIVATE_KEY}}
-          username: ${{ secrets.USERNAME }}
+          username: ${{ secrets.USER }}
 
           script: |
             cd app
