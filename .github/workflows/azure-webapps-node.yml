@@ -1,0 +1,22 @@
+name: Deploy staging server to REMOTE HOST
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - staging
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Frontend to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.HOST}}
+          private: ${{secrets.SSH_PRIVATE_KEY}}
+          username: ${{ secrets.USERNAME }}
+
+          script: |
+            cd app
+            git checkout dev
+            git pull
