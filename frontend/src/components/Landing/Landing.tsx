@@ -7,7 +7,7 @@ function Landing() {
   return (
     <TopSectionContainer >
       <LeftContainer>
-        <Slogan>{`Lighting store`}</Slogan>
+        <Slogan>{`Lighting store `}</Slogan>
         <Description>
           Brighten with confidence. Trust our light bulbs to deliver exceptional luminosity,
           creating a captivating ambiance.
