@@ -7,6 +7,7 @@ import { Landing } from '@/components/Landing';
 import { Navbar } from '@/components/Navbar';
 import { OurServices } from '@/components/Services';
 import { Marginer } from '@/components/Marginer';
+import { TopBulbs } from "@/components/TopBulbs/TopBulbs"
 
 
 export default function Home() {
@@ -16,15 +17,14 @@ export default function Home() {
       <Landing />
       <Marginer margin={"8em"} direction='vertical' />
       <OurServices />
-
-
+      <Marginer margin={"8em"} direction='vertical' />
+      <TopBulbs />
     </AppContainer>
   );
 }
 
 const AppContainer = styled.main`
   ${tw`
-    h-full
     container
     overflow-x-hidden
     relative
