@@ -13,7 +13,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{secrets.HOST}}
-          fingerprint: ${{secrets.SSH_PRIVATE_KEY}}
+          key: ${{secrets.SSH_PRIVATE_KEY}}
           username: ${{secrets.USER}}
 
           script: |
