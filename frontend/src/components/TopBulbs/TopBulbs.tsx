@@ -1,41 +1,29 @@
 import React, { useState } from 'react';
 import tw, { styled } from 'twin.macro';
 import Carousel from '@itseasy21/react-elastic-carousel';
-// import { useMediaQuery } from 'react-responsive';
-// import { SCREENS } from '@/components/responsive';
-
+import BulbCard from './BulbCard';
 
 export function TopBulbs() {
   const [current, setCurrent] = useState(0);
-  // const isMobile = useMediaQuery({ maxWidth: SCREENS.sm });
 
   const lightBulb = [
     {
-      name: 'Audi S3 Car',
-      mileage: '10k',
-      thumbnailSrc: 'https://cdn.jdpower.com/Models/640x480/2017-Audi-S3-PremiumPlus.jpg',
-      dailyPrice: 70,
-      monthlyPrice: 1600,
-      gearType: 'Auto',
-      gas: 'Petrol',
+      name: 'Indian Bulb',
+      thumbnailSrc: 'https://shinewiki.com/wp-content/uploads/2019/11/honda-city.jpg',
+      price: 1600,
+      discountedPrice: 1600,
     },
     {
       name: 'HONDA cITY 5 Seater Car',
-      mileage: '20k',
       thumbnailSrc: 'https://shinewiki.com/wp-content/uploads/2019/11/honda-city.jpg',
-      dailyPrice: 50,
-      monthlyPrice: 1500,
-      gearType: 'Auto',
-      gas: 'Petrol',
+      price: 1500,
+      discountedPrice: 1500,
     },
     {
       name: 'HONDA cITY 5 Seater Car',
-      mileage: '20k',
       thumbnailSrc: 'https://shinewiki.com/wp-content/uploads/2019/11/honda-city.jpg',
-      dailyPrice: 50,
-      monthlyPrice: 1500,
-      gearType: 'Auto',
-      gas: 'Petrol',
+      price: 1500,
+      discountedPrice: 1500,
     },
   ];
 
@@ -44,12 +32,17 @@ export function TopBulbs() {
       <Title>Explore Our Top Deals</Title>
 
       <CarsContainer>
-        <Carousel>
-          {lightBulb.map(item => <div key={item.name}>{item.name}</div>)}
+        <Carousel isRTL={true}>
+          {lightBulb.map((item) => (
+            <BulbCard
+              name={item.name}
+              price={item.price}
+              thumbnailSrc={item.thumbnailSrc}
+              discountedPrice={item.discountedPrice}
+            />
+          ))}
         </Carousel>
-
       </CarsContainer>
-
     </TopCarsContainer>
   );
 }
@@ -58,15 +51,12 @@ const TopCarsContainer = styled.div`
   ${tw`
     max-w-screen-lg
     w-full
+    bg-green-200
     flex
     flex-col
     items-center
     justify-center
-    pr-4
-    pl-4
-    md:pl-0
-    md:pr-0
-    mb-10
+    mx-auto
   `};
 `;
 
