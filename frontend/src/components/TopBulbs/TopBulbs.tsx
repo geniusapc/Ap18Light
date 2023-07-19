@@ -51,7 +51,6 @@ const TopCarsContainer = styled.div`
   ${tw`
     max-w-screen-lg
     w-full
-    bg-green-200
     flex
     flex-col
     items-center

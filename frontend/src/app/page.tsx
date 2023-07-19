@@ -18,11 +18,7 @@ export default function Home() {
       <Marginer margin={"8em"} direction='vertical' />
       <OurServices />
       <Marginer margin={"8em"} direction='vertical' />
-      <div className='bg-red-600'>
-
-        <TopBulbs />
-      </div>
-
+      <TopBulbs />
       <Marginer margin={"8em"} direction='vertical' />
     </AppContainer>
   );
