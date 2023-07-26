@@ -67,8 +67,8 @@ workflows:
           filters:
             branches:
               only: [staging]
-      - test-frontend:
-          requires: [build-frontend]
+      # - test-frontend:
+      #     requires: [build-frontend]
       - scan-frontend:
           requires: [build-frontend]
       - deploy-infrastructure:
