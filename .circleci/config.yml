@@ -18,47 +18,47 @@ jobs:
           paths: [frontend/node_modules]
           key: frontend-build
 
-    test-frontend:
-      docker:
-        - image: circleci/node:16.13.1
-      steps:
-        - checkout
-        - restore_cache:
-            keys: [frontend-build]
-        - run:
-            name: Frontend test
-            command: |
-              cd frontend
-              npm install
-              npm run test
+  test-frontend:
+    docker:
+      - image: circleci/node:16.13.1
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [frontend-build]
+      - run:
+          name: Frontend test
+          command: |
+            cd frontend
+            npm install
+            npm run test
 
-    scan-frontend:
-      docker:
-        - image: circleci/node:16.13.1
-      steps:
-        - checkout
-        - restore_cache:
-            keys: [frontend-build]
-        - run:
-            name: scan-frontend
-            command: |
-              cd frontend
-              npm install
-              npm audit fix --audit-level=critical
+  scan-frontend:
+    docker:
+      - image: circleci/node:16.13.1
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [frontend-build]
+      - run:
+          name: scan-frontend
+          command: |
+            cd frontend
+            npm install
+            npm audit fix --audit-level=critical
 
-    deploy-infrastructure:
-      docker:
-        - image: amazon/aws-cli
-      steps:
-        - checkout
-        - run:
-            name: Ensure front-end infrastructure exist
-            command: |
-              aws cloudformation deploy \
-                --template-file .circleci/files/frontend.yml \
-                --tags project=ap18light \
-                --stack-name "ap18light-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
-                --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
+  deploy-infrastructure:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Ensure front-end infrastructure exist
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/frontend.yml \
+              --tags project=ap18light \
+              --stack-name "ap18light-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
 
 workflows:
   default:
@@ -69,7 +69,7 @@ workflows:
               only: [staging]
       - test-frontend:
           requires: [build-frontend]
-      # - scan-frontend:
-      #     requires: [build-frontend]
-      # - deploy-infrastructure:
-      #     requires: [test-frontend, scan-frontend]
+      - scan-frontend:
+          requires: [build-frontend]
+      - deploy-infrastructure:
+          requires: [test-frontend, scan-frontend]
