@@ -78,7 +78,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            curl -fsSL https://rpm.nodesource.com/setup_14.x | bash -
+            curl -fsSL https://rpm.nodesource.com/setup_16.x | bash -
             yum install nodejs -y
             cd frontend
             npm install
