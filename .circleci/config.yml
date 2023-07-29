@@ -67,7 +67,7 @@ jobs:
               --template-file .circleci/files/frontend.yml \
               --tags project=ap18light \
               --stack-name "ap18light-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
 
   deploy-frontend:
     docker:
