@@ -1,5 +1,14 @@
 version: 2.1
 
+commands:
+  install-tar-and-zip:
+    steps:
+      - run:
+          name: Install tar and gzip
+          command: |
+            yum install tar -y
+            yum install gzip -y
+
 jobs:
   build-frontend:
     docker:
@@ -58,7 +67,29 @@ jobs:
               --template-file .circleci/files/frontend.yml \
               --tags project=ap18light \
               --stack-name "ap18light-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}
+
+  deploy-frontend:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - install-tar-and-zip
+      - run:
+          name: Install dependencies
+          command: |
+            curl -fsSL https://rpm.nodesource.com/setup_14.x | bash -
+            yum install nodejs -y
+            cd frontend
+            npm install
+
+      - run:
+          name: Deploy frontend objects
+          command: |
+            cd frontend
+            npm run build
+            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz out
+            aws s3 cp dist s3://"ap18light-${CIRCLE_WORKFLOW_ID:0:7}" --recursive
 
 workflows:
   default:
@@ -71,3 +102,5 @@ workflows:
           requires: [build-frontend]
       - deploy-infrastructure:
           requires: [scan-frontend]
+      - deploy-frontend:
+          requires: [deploy-infrastructure]
