@@ -11,6 +11,11 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub 'ap18light-${ID}'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: ObjectWriter
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: 404.html
