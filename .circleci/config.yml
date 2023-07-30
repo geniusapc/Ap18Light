@@ -137,19 +137,15 @@ jobs:
 workflows:
   default:
     jobs:
-      # - build-frontend:
-      #     filters:
-      #       branches:
-      #         only: [feat/deployment, staging]
-      # - scan-frontend:
-      #     requires: [build-frontend]
-      # - deploy-infrastructure:
-      #     requires: [scan-frontend]
-      # - deploy-frontend:
-      #     requires: [deploy-infrastructure]
-      - cleanup:
+      - build-frontend:
           filters:
             branches:
               only: [feat/deployment, staging]
-
-          # requires: [deploy-frontend]
+      - scan-frontend:
+          requires: [build-frontend]
+      - deploy-infrastructure:
+          requires: [scan-frontend]
+      - deploy-frontend:
+          requires: [deploy-infrastructure]
+      - cleanup:
+          requires: [deploy-frontend]
