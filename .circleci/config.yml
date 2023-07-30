@@ -128,30 +128,33 @@ jobs:
             # Fetch the Old workflow ID
             export OldWorkflowID=$(aws cloudformation \
                     list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-                    --no-paginate --output text)
+                    --no-paginate --output json)
 
             # Fetch the stack names          
             export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-                    --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
-            echo OldWorkflowID: "${OldWorkflowID}"
-            echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
-            echo Stack names: "${STACKS[@]}"
+                    --stack-status-filter CREATE_COMPLETE --no-paginate --output json))
+
+            echo Stack names from ci: "${STACKS[@]}"
 
             chmod +x .circleci/files/cleanStacks.sh 
-            .circleci/files/cleanStacks.sh ${CIRCLE_WORKFLOW_ID:0:7} STACKS
+            .circleci/files/cleanStacks.sh ${CIRCLE_WORKFLOW_ID:0:7} $STACKS[@]
 
 workflows:
   default:
     jobs:
-      - build-frontend:
+      # - build-frontend:
+      #     filters:
+      #       branches:
+      #         only: [feat/deployment, staging]
+      # - scan-frontend:
+      #     requires: [build-frontend]
+      # - deploy-infrastructure:
+      #     requires: [scan-frontend]
+      # - deploy-frontend:
+      #     requires: [deploy-infrastructure]
+      - cleanup:
           filters:
             branches:
               only: [feat/deployment, staging]
-      - scan-frontend:
-          requires: [build-frontend]
-      - deploy-infrastructure:
-          requires: [scan-frontend]
-      - deploy-frontend:
-          requires: [deploy-infrastructure]
-      - cleanup:
-          requires: [deploy-frontend]
+
+          # requires: [deploy-frontend]

@@ -5,6 +5,7 @@ echo "STACKS: $STACKS"
 
 for stack in $STACKS
 do
+
 BUCKETNAME="s3://ap18light-${stack: -7}"
 STACKNAME="ap18light-frontend-$flowID"
 
@@ -20,8 +21,8 @@ then
 else
   echo "Deleting $stack"
   echo "deleting bucket: $BUCKETNAME"
-  echo "deleting stack: $BUCKETNAME"
-  
+  echo "deleting stack: $STACKNAME"
+
   # aws s3 rb "s3://ap18light-$BUCKETNAME" --force
   # aws cloudformation delete-stack --stack-name "ap18light-frontend-$flowID"
 fi
