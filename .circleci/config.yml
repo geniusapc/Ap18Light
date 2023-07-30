@@ -132,20 +132,20 @@ jobs:
             echo Stack names from ci: "${STACKS[@]}"
 
             chmod +x .circleci/files/cleanStacks.sh 
-            .circleci/files/cleanStacks.sh ${CIRCLE_WORKFLOW_ID:0:7} $STACKS
+            .circleci/files/cleanStacks.sh ${CIRCLE_WORKFLOW_ID:0:7} "$STACKS[@]"
 
 workflows:
   default:
     jobs:
-      - build-frontend:
-          filters:
-            branches:
-              only: [feat/deployment, staging]
-      - scan-frontend:
-          requires: [build-frontend]
-      - deploy-infrastructure:
-          requires: [scan-frontend]
-      - deploy-frontend:
-          requires: [deploy-infrastructure]
+      # - build-frontend:
+      #     filters:
+      #       branches:
+      #         only: [feat/deployment, staging]
+      # - scan-frontend:
+      #     requires: [build-frontend]
+      # - deploy-infrastructure:
+      #     requires: [scan-frontend]
+      # - deploy-frontend:
+      #     requires: [deploy-infrastructure]
       - cleanup:
-          requires: [deploy-frontend]
+          # requires: [deploy-frontend]
