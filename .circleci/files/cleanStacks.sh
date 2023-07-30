@@ -5,8 +5,12 @@ echo "STACKS: $STACKS"
 
 for stack in $STACKS
 do
-BUCKETNAME=${stack: -7}
+BUCKETNAME="s3://ap18light-${stack: -7}"
+STACKNAME="ap18light-frontend-$flowID"
+
 echo "BUCKETNAME: $BUCKETNAME"
+echo "STACKNAME: $STACKNAME"
+
 if [[ $stack =~ "$flowID" ]]
 then
   echo "Keeping $stack because equal"
@@ -15,7 +19,9 @@ then
   echo "Keeping $stack because production stack"
 else
   echo "Deleting $stack"
-  echo "URL: s3://ap18light-$BUCKETNAME"
+  echo "deleting bucket: $BUCKETNAME"
+  echo "deleting stack: $BUCKETNAME"
+  
   # aws s3 rb "s3://ap18light-$BUCKETNAME" --force
   # aws cloudformation delete-stack --stack-name "ap18light-frontend-$flowID"
 fi
