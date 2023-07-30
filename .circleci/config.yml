@@ -151,7 +151,7 @@ workflows:
       - build-frontend:
           filters:
             branches:
-              only: [staging]
+              only: [feat/deployment, staging]
       - scan-frontend:
           requires: [build-frontend]
       - deploy-infrastructure:
