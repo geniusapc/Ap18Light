@@ -2,15 +2,15 @@ Description: >
   Ap18light frontend stack.
 
 Parameters:
-  ID:
-    Description: Unique identifier.
+  BucketName:
+    Description: s3 bucket name.
     Type: String
 
 Resources:
   WebsiteBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub 'ap18light-${ID}'
+      BucketName: !Sub '${BucketName}'
       PublicAccessBlockConfiguration:
         BlockPublicAcls: false
       OwnershipControls:

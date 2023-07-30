@@ -1,5 +1,9 @@
 version: 2.1
 
+environment:
+  APP_NAME: 'ap18light'
+  WORKFLOW_ID: '${CIRCLE_WORKFLOW_ID:0:7}'
+
 commands:
   install-tar-and-zip:
     steps:
@@ -8,6 +12,16 @@ commands:
           command: |
             yum install tar -y
             yum install gzip -y
+
+  install_awscli:
+    steps:
+      - run:
+          name: Install AWS-CLI
+          command: |
+            sudo apt-get install -y unzip
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
 
 jobs:
   build-frontend:
@@ -65,9 +79,9 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
-              --tags project=ap18light \
-              --stack-name "ap18light-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
+              --tags project="${APP_NAME}" \
+              --stack-name "${APP_NAME}-frontend-${WORKFLOW_ID}" \
+              --parameter-overrides BucketName="${APP_NAME}-${WORKFLOW_ID}" \
 
   deploy-frontend:
     docker:
@@ -88,8 +102,8 @@ jobs:
           command: |
             cd frontend
             npm run build
-            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz out
-            aws s3 cp out s3://"ap18light-${CIRCLE_WORKFLOW_ID:0:7}" --recursive
+            tar -czvf artifact-"${WORKFLOW_ID}".tar.gz out
+            aws s3 cp out s3://"${APP_NAME}-${WORKFLOW_ID}" --recursive
   cloudfront-update:
     docker:
       - image: amazon/aws-cli
@@ -101,8 +115,35 @@ jobs:
             aws cloudformation deploy \
             --template-file .circleci/files/cloudfront.yml \
             --stack-name cloudfront-stack \
-            --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
-            --tags project=ap18light \
+            --parameter-overrides WorkflowID="${WORKFLOW_ID}" \
+            --tags project="${APP_NAME}" \
+  cleanup:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - install_awscli
+      - run:
+          name: Remove old stack and files
+          command: |
+            # Fetch the Old workflow ID
+            export OldWorkflowID=$(aws cloudformation \
+                    list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+                    --no-paginate --output text)
+
+            # Fetch the stack names          
+            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+                    --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
+            echo OldWorkflowID: "${OldWorkflowID}"
+            echo CIRCLE_WORKFLOW_ID "${WORKFLOW_ID}"
+            echo Stack names: "${STACKS[@]}"
+
+            if [[ "${WORKFLOW_ID}" =~ "${OldWorkflowID}" ]]
+            then
+              aws s3 rm "s3://${APP_NAME}-${OldWorkflowID}" --recursive
+              aws cloudformation delete-stack --stack-name "${APP_NAME}-frontend-${OldWorkflowID}"
+            fi
+
 workflows:
   default:
     jobs:
