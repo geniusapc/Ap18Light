@@ -77,8 +77,6 @@ jobs:
     executor: aws_image
     steps:
       - checkout
-      - run: echo "$ap18light-frontend-$CIRCLE_WORKFLOW_ID:0:7"
-      - run: echo "ap18light-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -140,11 +138,7 @@ jobs:
             echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
             echo Stack names: "${STACKS[@]}"
 
-            if [[ "${CIRCLE_WORKFLOW_ID:0:7}" =~ "${OldWorkflowID}" ]]
-            then
-              aws s3 rm "s3://ap18light-${OldWorkflowID}" --recursive
-              aws cloudformation delete-stack --stack-name "ap18light-frontend-${OldWorkflowID}"
-            fi
+            .circleci/files/cleanStacks.sh ${CIRCLE_WORKFLOW_ID:0:7} STACKS
 
 workflows:
   default:
