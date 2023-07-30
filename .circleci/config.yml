@@ -1,9 +1,5 @@
 version: 2.1
 
-environment:
-  APP_NAME: 'ap18light'
-  WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}
-
 executors:
   node_image:
     docker:
@@ -81,16 +77,16 @@ jobs:
     executor: aws_image
     steps:
       - checkout
-      - run: echo "$APP_NAME-frontend-$WORKFLOW_ID"
-      - run: echo "${APP_NAME}-frontend-${WORKFLOW_ID}"
+      - run: echo "$ap18light-frontend-$CIRCLE_WORKFLOW_ID:0:7"
+      - run: echo "${ap18light}-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
       - run:
           name: Ensure front-end infrastructure exist
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
-              --tags project="${APP_NAME}" \
-              --stack-name "${APP_NAME}-frontend-${WORKFLOW_ID}" \
-              --parameter-overrides BucketName="${APP_NAME}-${WORKFLOW_ID}" \
+              --tags project="${ap18light}" \
+              --stack-name "${ap18light}-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides BucketName="${ap18light}-${CIRCLE_WORKFLOW_ID:0:7}" \
 
   deploy-frontend:
     executor: aws_image
@@ -110,8 +106,8 @@ jobs:
           command: |
             cd frontend
             npm run build
-            tar -czvf artifact-"${WORKFLOW_ID}".tar.gz out
-            aws s3 cp out s3://"${APP_NAME}-${WORKFLOW_ID}" --recursive
+            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz out
+            aws s3 cp out s3://"${ap18light}-${CIRCLE_WORKFLOW_ID:0:7}" --recursive
   cloudfront-update:
     executor: aws_image
     steps:
@@ -122,8 +118,8 @@ jobs:
             aws cloudformation deploy \
             --template-file .circleci/files/cloudfront.yml \
             --stack-name cloudfront-stack \
-            --parameter-overrides WorkflowID="${WORKFLOW_ID}" \
-            --tags project="${APP_NAME}" \
+            --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
+            --tags project="${ap18light}" \
   cleanup:
     executor: base_image
     steps:
@@ -141,13 +137,13 @@ jobs:
             export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
                     --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
             echo OldWorkflowID: "${OldWorkflowID}"
-            echo CIRCLE_WORKFLOW_ID "${WORKFLOW_ID}"
+            echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
             echo Stack names: "${STACKS[@]}"
 
-            if [[ "${WORKFLOW_ID}" =~ "${OldWorkflowID}" ]]
+            if [[ "${CIRCLE_WORKFLOW_ID:0:7}" =~ "${OldWorkflowID}" ]]
             then
-              aws s3 rm "s3://${APP_NAME}-${OldWorkflowID}" --recursive
-              aws cloudformation delete-stack --stack-name "${APP_NAME}-frontend-${OldWorkflowID}"
+              aws s3 rm "s3://${ap18light}-${OldWorkflowID}" --recursive
+              aws cloudformation delete-stack --stack-name "${ap18light}-frontend-${OldWorkflowID}"
             fi
 
 workflows:
