@@ -132,7 +132,7 @@ jobs:
             echo Stack names from ci: "${STACKS[@]}"
 
             chmod +x .circleci/files/cleanStacks.sh 
-            .circleci/files/cleanStacks.sh ${CIRCLE_WORKFLOW_ID:0:7} "$STACKS[@]"
+            .circleci/files/cleanStacks.sh ${CIRCLE_WORKFLOW_ID:0:7} "${STACKS[@]}"
 
 workflows:
   default:
