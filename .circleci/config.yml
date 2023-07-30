@@ -147,5 +147,5 @@ workflows:
       #     requires: [scan-frontend]
       # - deploy-frontend:
       #     requires: [deploy-infrastructure]
-      - cleanup:
+      - cleanup
           # requires: [deploy-frontend]
