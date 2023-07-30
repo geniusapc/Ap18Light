@@ -2,7 +2,18 @@ version: 2.1
 
 environment:
   APP_NAME: 'ap18light'
-  WORKFLOW_ID: '${CIRCLE_WORKFLOW_ID:0:7}'
+  WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}
+
+executors:
+  node_image:
+    docker:
+      - image: circleci/node:16.13.1
+  aws_image:
+    docker:
+      - image: amazon/aws-cli
+  base_image:
+    docker:
+      - image: amazon/aws-cli
 
 commands:
   install-tar-and-zip:
@@ -25,8 +36,7 @@ commands:
 
 jobs:
   build-frontend:
-    docker:
-      - image: circleci/node:16.13.1
+    executor: node_image
     steps:
       - checkout
       - restore_cache:
@@ -42,8 +52,7 @@ jobs:
           key: frontend-build
 
   test-frontend:
-    docker:
-      - image: circleci/node:16.13.1
+    executor: node_image
     steps:
       - checkout
       - restore_cache:
@@ -56,8 +65,7 @@ jobs:
             npm run test
 
   scan-frontend:
-    docker:
-      - image: circleci/node:16.13.1
+    executor: node_image
     steps:
       - checkout
       - restore_cache:
@@ -70,10 +78,10 @@ jobs:
             npm audit fix --audit-level=critical
 
   deploy-infrastructure:
-    docker:
-      - image: amazon/aws-cli
+    executor: aws_image
     steps:
       - checkout
+      - run: echo "$APP_NAME-frontend-$WORKFLOW_ID"
       - run: echo "${APP_NAME}-frontend-${WORKFLOW_ID}"
       - run:
           name: Ensure front-end infrastructure exist
@@ -85,8 +93,7 @@ jobs:
               --parameter-overrides BucketName="${APP_NAME}-${WORKFLOW_ID}" \
 
   deploy-frontend:
-    docker:
-      - image: amazon/aws-cli
+    executor: aws_image
     steps:
       - checkout
       - install-tar-and-zip
@@ -106,8 +113,7 @@ jobs:
             tar -czvf artifact-"${WORKFLOW_ID}".tar.gz out
             aws s3 cp out s3://"${APP_NAME}-${WORKFLOW_ID}" --recursive
   cloudfront-update:
-    docker:
-      - image: amazon/aws-cli
+    executor: aws_image
     steps:
       - checkout
       - run:
@@ -119,8 +125,7 @@ jobs:
             --parameter-overrides WorkflowID="${WORKFLOW_ID}" \
             --tags project="${APP_NAME}" \
   cleanup:
-    docker:
-      - image: cimg/base:stable
+    executor: base_image
     steps:
       - checkout
       - install_awscli
