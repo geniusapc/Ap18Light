@@ -119,10 +119,9 @@ jobs:
             --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
             --tags project="ap18light" \
   cleanup:
-    executor: base_image
+    executor: aws_image
     steps:
       - checkout
-      - install_awscli
       - run:
           name: Remove old stack and files
           command: |
@@ -154,4 +153,4 @@ workflows:
       - deploy-frontend:
           requires: [deploy-infrastructure]
       - cleanup:
-         requires: [deploy-frontend]
+          requires: [deploy-frontend]
