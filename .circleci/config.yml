@@ -78,15 +78,15 @@ jobs:
     steps:
       - checkout
       - run: echo "$ap18light-frontend-$CIRCLE_WORKFLOW_ID:0:7"
-      - run: echo "${ap18light}-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
+      - run: echo "ap18light-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
       - run:
           name: Ensure front-end infrastructure exist
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
-              --tags project="${ap18light}" \
-              --stack-name "${ap18light}-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides BucketName="${ap18light}-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --tags project="ap18light" \
+              --stack-name = "ap18light-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides BucketName="ap18light-${CIRCLE_WORKFLOW_ID:0:7}" \
 
   deploy-frontend:
     executor: aws_image
@@ -107,7 +107,7 @@ jobs:
             cd frontend
             npm run build
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz out
-            aws s3 cp out s3://"${ap18light}-${CIRCLE_WORKFLOW_ID:0:7}" --recursive
+            aws s3 cp out s3://"ap18light-${CIRCLE_WORKFLOW_ID:0:7}" --recursive
   cloudfront-update:
     executor: aws_image
     steps:
@@ -119,7 +119,7 @@ jobs:
             --template-file .circleci/files/cloudfront.yml \
             --stack-name cloudfront-stack \
             --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
-            --tags project="${ap18light}" \
+            --tags project="ap18light" \
   cleanup:
     executor: base_image
     steps:
@@ -142,8 +142,8 @@ jobs:
 
             if [[ "${CIRCLE_WORKFLOW_ID:0:7}" =~ "${OldWorkflowID}" ]]
             then
-              aws s3 rm "s3://${ap18light}-${OldWorkflowID}" --recursive
-              aws cloudformation delete-stack --stack-name "${ap18light}-frontend-${OldWorkflowID}"
+              aws s3 rm "s3://ap18light-${OldWorkflowID}" --recursive
+              aws cloudformation delete-stack --stack-name "ap18light-frontend-${OldWorkflowID}"
             fi
 
 workflows:
